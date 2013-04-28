@@ -1,0 +1,15 @@
+<html>
+<head>
+	<!-- This is only loaded if default_popup is specified in manifest.json -->
+	<!-- Inline script is not allowed by Chrome extension security, so we can only specify js files -->
+	<!-- This gets us a local jQuery we can use in Chrome extension pages, since we don't have access to app JS -->
+	<script src="jquery-2.0.0.min.js"></script>
+	<script src="popup.js"></script>
+</head>
+<body>
+	<b>Appsuite Template</b>
+
+	<button id="closeButton" type="button">Close</button>
+
+</body>
+</html>
