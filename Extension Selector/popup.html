@@ -1,0 +1,20 @@
+<html>
+<head>
+	<!-- This is only loaded if default_popup is specified in manifest.json -->
+	<!-- Inline script is not allowed by Chrome extension security, so we can only specify js files -->
+	<!-- This gets us a local jQuery we can use in Chrome extension pages, since we don't have access to app JS -->
+	<script src="jquery-2.0.0.min.js"></script>
+	<script src="injectScript.js"></script>
+	<script src="extensionPoint.js"></script>
+	<script src="popup.js"></script>
+</head>
+<body>
+	<div style="width:100px">
+	<input id="checkBox1" type="checkbox">Advertising in Read Message</input><br>
+	<input id="checkBox2" type="checkbox">Example 2</input><br>
+	<input id="checkBox3" type="checkbox">Example 3</input><br>
+	<input id="checkBox4" type="checkbox">Example 4</input><br>
+	<button id="closeButton" type="button">Close</button><br>
+	</div>
+</body>
+</html>
