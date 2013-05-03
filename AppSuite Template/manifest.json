@@ -90,6 +90,7 @@
   "permissions": [
     "tabs", //Allows us to use chrome.tabs
     "webRequest", //Allows us to use chrome.webRequest
+    "storage", //Allows us to use extension space storage across sessions
     //"declarativeWebRequest", //Faster than webRequest, but only available in beta channel
     //Warning: Unless you make this more explicit after initial testing you may open up a
     //  cross site scripting vulnerability

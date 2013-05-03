@@ -7,3 +7,27 @@ $(document).ready(function(){
         window.close();
     });
 });
+
+//We can also get and set persistent storage that lasts across browser sessions
+//Persistent storage can be local or sync
+//If sync, Chrome will attempt to set/restore across different devices
+var storage = chrome.storage.local;
+
+storage.set({
+	'KeyValue1': "Value of KeyValue1",
+	'KeyValue2': "Value of KeyValue2"
+},function(){
+	//Success
+})
+
+storage.get([
+	'KeyValue1',
+	'KeyValue2'],
+	function(items){
+		if (items.KeyValue1)
+			console.log(items.KeyValue1);
+		if (items.KeyValue2)
+			console.log(items.KeyValue2);
+
+})
+

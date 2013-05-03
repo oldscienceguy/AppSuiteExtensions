@@ -46,8 +46,6 @@ function injectScript(developer, extensionName, functionNameToInject) {
 	//Replace with escaped \n so it appears as '\n' in text
 	js = js.replace(/\n/g, "\\n"); //No more \n
 
-	console.log(js);
-
 	var inject = document.createElement('script');
 	inject.type = 'text/javascript';
 	inject.text = "";
