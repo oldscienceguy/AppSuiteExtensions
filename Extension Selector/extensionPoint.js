@@ -1,16 +1,35 @@
 //Updated ExtensionPoint examples from  Matthias Biggeleben, wrapped in Chrome Extension by Rich Landsman
 
+//WARNING:  Function name gets replaced with namespace specific function during injection
+//	DO NOT USE Function Name anywhere other than definition or it will be replaced
+
+//Disable extensions
+function DisableExtension(extPoint,id) { 
+	// Disable participants
+	var ext = require("io.ox/core/extensions");
+	//ext.point("io.ox/calendar/detail").disable("participants");
+	ext.point(extPoint).disable(id);
+}
+
+//Enable extensions
+function EnableExtension(extPoint,id) { 
+	// Re-enable participants
+	var ext = require("io.ox/core/extensions");
+	//ext.point("io.ox/calendar/detail").enable("participants");
+	ext.point(extPoint).enable(id);
+}
+
 //Add advertisement banner to mail detail view
-function AddAdvertisementBanner() {
-	//console.log("Executing EP here");
-	//debugger;
+//Example url
+//var url = "http://upload.wikimedia.org/wikipedia/de/thumb/" + 
+//    "c/cb/Logo_Burger_King.svg/200px-Logo_Burger_King.svg.png"
+
+function AddAdvertisementBanner(url) {
 	var ext = require("io.ox/core/extensions");
 	ext.point('io.ox/mail/detail/header').extend({
 	  index: 'first',
 	  id: 'ad',
 	  draw: function (data) {
-	    var url = "http://upload.wikimedia.org/wikipedia/de/thumb/" + 
-	        "c/cb/Logo_Burger_King.svg/200px-Logo_Burger_King.svg.png"
 	    this.append(
 	      $('<div class="pull-right">')
 	      .css({
@@ -39,19 +58,6 @@ function AddYourOwnExtension() {
 	});
 }
 
-//Disable extensions
-function DisableExtensions() { 
-	// Disable participants
-	var ext = require("io.ox/core/extensions");
-	ext.point("io.ox/calendar/detail").disable("participants");
-}
-
-//Enable extensions
-function EnableExtensions() { 
-	// Re-enable participants
-	var ext = require("io.ox/core/extensions");
-	ext.point("io.ox/calendar/detail").enable("participants");
-}
 
 //Customize existing extension
 function CustomizeExistingExtension() { 

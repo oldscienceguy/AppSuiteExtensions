@@ -48,9 +48,15 @@ $(document).ready(function(){
     	//Turn on EP
     	if ($("#checkBox1")[0].checked) {
     		//On
-    		injectScript("RAL","ExtensionSelector","AddAdvertisementBanner");
+            //Note: All arguments to injectScript are passed as quoted string - see var url
+            var url = '"http://upload.wikimedia.org/wikipedia/de/thumb/' + 
+            'c/cb/Logo_Burger_King.svg/200px-Logo_Burger_King.svg.png"';
+
+    		injectScript({developer: "RAL",functionName: "AddAdvertisementBanner", arg1: url});
     	} else {
     		//Off
+            injectScript({developer: "RAL",functionName: "DisableExtension", arg1: '"io.ox/mail/detail/header"', arg2: '"ad"'});
+
     	}
     });
     $("#checkBox2").click(function(){

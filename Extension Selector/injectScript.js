@@ -7,38 +7,56 @@
 //If we get it wrong, we'll get an error "require is not defined"
 //
 //Args
-//  developer - string with company name or other unique id.  Used to create namespace
-//  extensionName - string with extensionName.  Used with developer to create namespace
-//  functionNameToInject - string of function that will be injected
-function injectScript(developer, extensionName, functionNameToInject) {
+//  developer: - string with company name or other unique id.  Used to create namespace
+//  functionName: - string of function name that will be injected
+//	arg1: - optional args for function
+//	arg2:
+//	arg3:
+//
+//function injectScript(developer, extensionName, functionNameToInject) {
+function injectScript(context) {
+	if (!context.functionName) {
+		console.log("functionName: is a required context memeber");
+		return;
+	} 
+	var functionName = context.functionName;
+	//If no developer: passed, default to Ox
+	var developer = context.developer || "Ox";
+
 	//Everything below is executed in Chrome extension context, so no namespace conflict with other scripts
 	console.log("In injectScript");
 	//debugger; //break
-	var functionName = "OxEp." + developer + "." + extensionName;
+	//This is pre-pended to functionName to create namespace to avoid collision with other developers
+	var nameSpace = "OxEp." + developer + ".";
 
-	
-	
 	//js is what will go in the inject.text element
 	var js = '';
 	//js += 'console.log("Executing in application context");';
 
 	//Create namespace
-	js += "if (typeof OxEp == 'undefined' || OxEp == null) OxEp = function(){};\n";
-	js += "if (typeof OxEp." + developer +" == 'undefined' || OxEp." + developer + "== null) OxEp." + developer +" = function(){};\n";
+	js += "if (typeof OxEp == 'undefined' || OxEp == null) OxEp = {};\n";
+	js += "if (typeof OxEp." + developer +" == 'undefined' || OxEp." + developer + "== null) OxEp." + developer +" = {};\n";
 	//Define function in our namespace
-	js += functionName + " = ";
+	js += nameSpace + functionName + " = ";
 	//This is way easier than trying to create script by continued string concat
 	//We create a function with all the injected code and then call it
-	var temp = eval(functionNameToInject + ".toString();");
-	temp = temp.replace(functionNameToInject,""); //Gets rid of original function name
+	var temp = eval(functionName + ".toString();");
+	temp = temp.replace(functionName,""); //Puts functioName in namespace
 	js += temp;
 	js += ";";
 	//Execute function after short delay to allow post load require.js patching by boot.js
 	//If delay is too short, we may get errors in require() statements
 	//If delay is too long, user may not see extension if they look right away
 	js += "window.setTimeout(function() {";
-	js += functionName + "();";
-	js += "},1000);";
+	js += nameSpace + functionName + "(";
+	if (context.arg1)
+		js += context.arg1;
+	if (context.arg2)
+		js += "," + context.arg2
+	if (context.arg3)
+		js += "," + context.arg3
+	//Continue if we need more optional args
+	js += ");},1000);";
 	//Here be dragons: Be very careful if you need to change escape logic, easy to introduce hard-to-find errors
 	js = js.replace(/\"/g, '\\"'); //escape double quotes
 	js = js.replace(/\'/g, "\'"); //escape single quotes
@@ -52,8 +70,8 @@ function injectScript(developer, extensionName, functionNameToInject) {
 	inject.text += 'var ep = document.createElement("script");';
 	inject.text += 'ep.type = "text/javascript";';
 	inject.text += 'ep.text = "' + js + '";';
+	console.log(inject.text); //Check generated script
 	//This code works if we're called with programatic injection or content_script injection
-	//If we're called programatically from chrome context (popup.js) we need to use executeScript
 	if (chrome && chrome.tabs) {
 		//Programatic injection
 		inject.text += 'document.head.appendChild(ep);';
