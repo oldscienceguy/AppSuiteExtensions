@@ -8,7 +8,8 @@
 //
 //Args
 //  developer: - string with company name or other unique id.  Used to create namespace
-//  functionName: - string of function name that will be injected
+//  obj: - Object to be inserted (not a string name for object)
+//	objName: - Name we want to use for object in application code in order to call methods
 //	arg1: - optional args for function
 //	arg2:
 //	arg3:
@@ -36,7 +37,7 @@ function injectScript(context) {
 	//Create namespace
 	js += "if (typeof OxEp == 'undefined' || OxEp == null) OxEp = {};\n";
 	js += "if (typeof OxEp." + developer +" == 'undefined' || OxEp." + developer + "== null) OxEp." + developer +" = {};\n";
-	//Define function in our namespace
+	//Define global (no var) function name in our namespace
 	js += nameSpace + functionName + " = ";
 	//This is way easier than trying to create script by continued string concat
 	//We create a function with all the injected code and then call it
@@ -44,6 +45,7 @@ function injectScript(context) {
 	temp = temp.replace(functionName,""); //Puts functioName in namespace
 	js += temp;
 	js += ";";
+
 	//Execute function after short delay to allow post load require.js patching by boot.js
 	//If delay is too short, we may get errors in require() statements
 	//If delay is too long, user may not see extension if they look right away
@@ -57,6 +59,11 @@ function injectScript(context) {
 		js += "," + context.arg3
 	//Continue if we need more optional args
 	js += ");},1000);";
+	injectCode(js);
+}
+
+//Injects a string containing executable code
+function injectCode(js){
 	//Here be dragons: Be very careful if you need to change escape logic, easy to introduce hard-to-find errors
 	js = js.replace(/\"/g, '\\"'); //escape double quotes
 	js = js.replace(/\'/g, "\'"); //escape single quotes
@@ -64,13 +71,14 @@ function injectScript(context) {
 	//Replace with escaped \n so it appears as '\n' in text
 	js = js.replace(/\n/g, "\\n"); //No more \n
 
+
 	var inject = document.createElement('script');
 	inject.type = 'text/javascript';
 	inject.text = "";
 	inject.text += 'var ep = document.createElement("script");';
 	inject.text += 'ep.type = "text/javascript";';
 	inject.text += 'ep.text = "' + js + '";';
-	console.log(inject.text); //Check generated script
+	console.log(inject.text);
 	//This code works if we're called with programatic injection or content_script injection
 	if (chrome && chrome.tabs) {
 		//Programatic injection
@@ -80,4 +88,87 @@ function injectScript(context) {
 		//Content_script injection
 		document.head.appendChild(inject);
 	}
+
+}
+
+//Injects an object with standard methods we can call
+//returns the namespace and objectname
+function injectObject(context) {
+	if (!context.obj) {
+		console.log("obj: is a required context member");
+		return;
+	} 
+	if (!context.objName) {
+		console.log("objName: is a required context member");
+		return;
+	} 
+
+	var obj = context.obj;
+	//If no developer: passed, default to Ox
+	var developer = context.developer || "Ox";
+	//This is pre-pended to functionName to create namespace to avoid collision with other developers
+	var nameSpace = "OxEp." + developer + ".";
+	var objName = nameSpace + context.objName;
+
+	//Everything below is executed in Chrome extension context, so no namespace conflict with other scripts
+	console.log("In injectObject");
+	//debugger; //break
+
+	//js is what will go in the inject.text element
+	var js = '';
+	//js += 'console.log("Executing in application context");';
+
+	//Create namespace
+	js += "if (typeof OxEp == 'undefined' || OxEp == null) OxEp = {};\n";
+	js += "if (typeof OxEp." + developer +" == 'undefined' || OxEp." + developer + "== null) OxEp." + developer +" = {};\n";
+	//Define global (no var) function name in our namespace
+	//Creates object and data members (not functions)
+	js += objName + " = ";
+	js += JSON.stringify(obj);
+	js += ";";
+	
+	//Create member code.  No way to do this automatically in js, but we know member names
+	js += objName + ".install = ";
+	var temp = obj.install.toString();
+	temp = temp.replace("install",""); //Puts functioName in namespace
+	js += temp;
+	js += ";";
+
+	js += objName + ".enableExt = ";
+	var temp = obj.enableExt.toString();
+	temp = temp.replace("enableExt",""); //Puts functioName in namespace
+	js += temp;
+	js += ";";
+
+	js += objName + ".disableExt = ";
+	var temp = obj.disableExt.toString();
+	temp = temp.replace("disableExt",""); //Puts functioName in namespace
+	js += temp;
+	js += ";";
+
+	js += objName + ".removeExt = ";
+	var temp = obj.removeExt.toString();
+	temp = temp.replace("removeExt",""); //Puts functioName in namespace
+	js += temp;
+	js += ";";
+
+/*
+	//Execute function after short delay to allow post load require.js patching by boot.js
+	//If delay is too short, we may get errors in require() statements
+	//If delay is too long, user may not see extension if they look right away
+	js += "window.setTimeout(function() {";
+	js += nameSpace + objName + ".install(";
+
+	if (context.arg1)
+		js += context.arg1;
+	if (context.arg2)
+		js += "," + context.arg2
+	if (context.arg3)
+		js += "," + context.arg3
+
+	//Continue if we need more optional args
+	js += ");},1000);";
+*/
+	injectCode(js);
+	return objName;
 }

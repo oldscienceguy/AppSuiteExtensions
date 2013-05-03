@@ -24,11 +24,27 @@ function saveState() {
 //Add a handler for our close button
 $(document).ready(function(){
 	var foo = false;
+    //Inject all our dependent EPs first
+    //Note: All arguments to injectScript are passed as quoted string - see var url
+    var url = '"http://upload.wikimedia.org/wikipedia/de/thumb/' + 
+    'c/cb/Logo_Burger_King.svg/200px-Logo_Burger_King.svg.png"';
+
+    //Testing
+    //url: is specific to this EP Object
+    var msgObj = injectObject({developer: "RAL", obj: MessageAdvertising, objName: "MessageAdvertising"});
+    injectCode(msgObj + ".url = " + url + ";");
+    injectCode(msgObj + ".install();");
+
+
 	storage.get(['CB1','CB2','CB3','CB4'],function(items){
 		//This is a callback and gets called asynchronously from rest of code
 		//Wait for storage data to be available
-		if (items.CB1)
+		if (items.CB1) {
 			$("#checkBox1")[0].checked = items.CB1;
+            injectCode(msgObj + ".enableExt();");
+        } else {
+            injectCode(msgObj + ".disableExt();");            
+        }
 		if (items.CB2)
 			$("#checkBox2")[0].checked = items.CB2;
 		if (items.CB3)
@@ -47,16 +63,9 @@ $(document).ready(function(){
     	saveState();
     	//Turn on EP
     	if ($("#checkBox1")[0].checked) {
-    		//On
-            //Note: All arguments to injectScript are passed as quoted string - see var url
-            var url = '"http://upload.wikimedia.org/wikipedia/de/thumb/' + 
-            'c/cb/Logo_Burger_King.svg/200px-Logo_Burger_King.svg.png"';
-
-    		injectScript({developer: "RAL",functionName: "AddAdvertisementBanner", arg1: url});
+            injectCode(msgObj + ".enableExt();");
     	} else {
-    		//Off
-            injectScript({developer: "RAL",functionName: "DisableExtension", arg1: '"io.ox/mail/detail/header"', arg2: '"ad"'});
-
+            injectCode(msgObj + ".disableExt();");
     	}
     });
     $("#checkBox2").click(function(){

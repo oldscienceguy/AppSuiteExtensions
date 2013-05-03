@@ -5,7 +5,6 @@
 
 //Disable extensions
 function DisableExtension(extPoint,id) { 
-	// Disable participants
 	var ext = require("io.ox/core/extensions");
 	//ext.point("io.ox/calendar/detail").disable("participants");
 	ext.point(extPoint).disable(id);
@@ -13,7 +12,6 @@ function DisableExtension(extPoint,id) {
 
 //Enable extensions
 function EnableExtension(extPoint,id) { 
-	// Re-enable participants
 	var ext = require("io.ox/core/extensions");
 	//ext.point("io.ox/calendar/detail").enable("participants");
 	ext.point(extPoint).enable(id);
@@ -24,23 +22,48 @@ function EnableExtension(extPoint,id) {
 //var url = "http://upload.wikimedia.org/wikipedia/de/thumb/" + 
 //    "c/cb/Logo_Burger_King.svg/200px-Logo_Burger_King.svg.png"
 
-function AddAdvertisementBanner(url) {
-	var ext = require("io.ox/core/extensions");
-	ext.point('io.ox/mail/detail/header').extend({
-	  index: 'first',
-	  id: 'ad',
-	  draw: function (data) {
-	    this.append(
-	      $('<div class="pull-right">')
-	      .css({
-	        backgroundImage: "url(" + url + ")",
-	        backgroundSize: '100px 100px',
-	        width: '100px', height: '100px',
-	        margin: '0px 0px 40px 10px',
-	      })
-	    );
-	  }
-	});
+MessageAdvertising = {
+	extPoint: 'io.ox/mail/detail/header',
+	extId: 'ad',
+	ext: null,
+	url: null,
+	install: function() {
+		if (this.url==null)
+			return; //Nothing to display
+		this.ext = require("io.ox/core/extensions");
+		var self = this;
+		this.ext.point(this.extPoint).extend({
+		  index: 'first',
+		  id: this.extId,
+		  draw: function (data) {
+		  	//this refers to the window in the draw context, not the object
+		  	//Use 'self'
+		    this.append(
+		      $('<div class="pull-right">')
+		      .css({
+		        backgroundImage: "url(" + self.url + ")",
+		        backgroundSize: '100px 100px',
+		        width: '100px', height: '100px',
+		        margin: '0px 0px 40px 10px',
+		      })
+		    );
+		  }
+		});
+	},
+	//We can't call this method same name as ext.point... or it will be replaced in injectObj
+	enableExt: function() {
+		//If not installed, ext will be undefined
+		if (this.ext)
+			this.ext.point(this.extPoint).enable(this.extId);
+
+	},
+	disableExt: function() {
+		if (this.ext)
+			this.ext.point(this.extPoint).disable(this.extId);
+	},
+	removeExt: function () {
+
+	}
 }
 
 //Add your own extension
