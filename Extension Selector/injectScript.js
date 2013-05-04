@@ -6,6 +6,9 @@
 //So we need to insert the entire script into page to get it in the right context
 //If we get it wrong, we'll get an error "require is not defined"
 //
+
+console.log("injectScript.js loading");
+
 //Args
 //  developer: - string with company name or other unique id.  Used to create namespace
 //  obj: - Object to be inserted (not a string name for object)
@@ -71,21 +74,23 @@ function injectCode(js){
 	//Replace with escaped \n so it appears as '\n' in text
 	js = js.replace(/\n/g, "\\n"); //No more \n
 
-
-	var inject = document.createElement('script');
-	inject.type = 'text/javascript';
+	//This code works if we're called with programatic injection or content_script injection
+	var inject = document.createElement("script");
+	inject.type = "text/javascript";
 	inject.text = "";
 	inject.text += 'var ep = document.createElement("script");';
 	inject.text += 'ep.type = "text/javascript";';
 	inject.text += 'ep.text = "' + js + '";';
+	inject.text += 'document.head.appendChild(ep);';
 	console.log(inject.text);
-	//This code works if we're called with programatic injection or content_script injection
+
 	if (chrome && chrome.tabs) {
 		//Programatic injection
-		inject.text += 'document.head.appendChild(ep);';
+		console.log("Inject via chrome.tabs.executeScript");
 		chrome.tabs.executeScript(null, {"code": inject.text});
 	} else {
-		//Content_script injection
+		//Content_script sandbox
+		console.log("Inject via document.head.appendChild()");
 		document.head.appendChild(inject);
 	}
 
@@ -152,23 +157,23 @@ function injectObject(context) {
 	js += temp;
 	js += ";";
 
-/*
+
 	//Execute function after short delay to allow post load require.js patching by boot.js
 	//If delay is too short, we may get errors in require() statements
 	//If delay is too long, user may not see extension if they look right away
 	js += "window.setTimeout(function() {";
-	js += nameSpace + objName + ".install(";
-
+	js += objName + ".install(";
+/*
 	if (context.arg1)
 		js += context.arg1;
 	if (context.arg2)
 		js += "," + context.arg2
 	if (context.arg3)
 		js += "," + context.arg3
-
+*/
 	//Continue if we need more optional args
 	js += ");},1000);";
-*/
+
 	injectCode(js);
 	return objName;
 }

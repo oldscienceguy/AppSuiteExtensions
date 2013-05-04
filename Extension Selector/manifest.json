@@ -67,8 +67,9 @@
   "content_scripts": [
     {
       //Matches one or more patterns, each pattern must have all 3 URL components
-      //"matches": ["*://*.open-xchange.com/appsuite*"], 
-      "matches": ["http://~/~"], //Matches nothing
+      "matches": ["*://*.open-xchange.com/appsuite*"], 
+      //"matches": ["http://~/~"], //Matches nothing
+      //"matches": ["<all_urls>"], //Matches everything
 
       //One or more CSS files to inject on matching pages
       //"css": ["mystyles.css"],
@@ -76,7 +77,8 @@
       //One or more JS files to inject on matching pages
       "js": [
         "injectScript.js", //Utility function to inject any function into app, then call it
-        "extensionPoint.js"
+        "extensionPoint.js",
+        "execution.js" //Message passing
         ]
 
       //Script can be injected at document_start, document_end, or document_idle (default)
