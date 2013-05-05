@@ -59,9 +59,8 @@ MessageAdvertising = {
 	extId: 'ad',
 	ext: null,
 	url: null,
-	install: function() {
-		if (this.url==null)
-			return; //Nothing to display
+	install: function(url) {
+		this.url = url;
 		var self = this;
 		require(["io.ox/core/extensions"],function(ext) {
 			self.ext = ext;

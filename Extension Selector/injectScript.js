@@ -6,7 +6,38 @@
 //So we need to insert the entire script into page to get it in the right context
 //If we get it wrong, we'll get an error "require is not defined"
 //
+/*
+		|---------------------------|					|---------------------------|
+		|Chrome Extension context 	|					|PopUp context				|
+		|	Background.js        	|					|	popup.html popup.js 	|
+		|							|					|	debug with icon menu	|
+		|---------------------------|					|---------------------------|
+					V 												V
+		chrome.tabs.executeScript 						chrome.tabs.executeScript
+		manifest content_script 									|
+					V 												V
+		|---------------------------|  <-----------------------------
+		|Sandboxed App context 		|
+		|	Content_script 			|
+		|	Access App DOM 			|
+		|	No Access APP JS 		|
+		|	console.log(where?)		|
+		|	debugger (where?) 		|
+		|							|
+		|---------------------------|
+					V
+			Append Script Object
+					V
+		|---------------------------|
+		|Application context 		|
+		|	App DOM 				|
+		|	App JS 					|
+		|	AppSuite 				|
+		|							|
+		|---------------------------|
 
+
+*/
 console.log("injectScript.js loading");
 
 //Args
@@ -163,14 +194,14 @@ function injectObject(context) {
 	//If delay is too long, user may not see extension if they look right away
 	js += "window.setTimeout(function() {";
 	js += objName + ".install(";
-/*
+
 	if (context.arg1)
 		js += context.arg1;
 	if (context.arg2)
 		js += "," + context.arg2
 	if (context.arg3)
 		js += "," + context.arg3
-*/
+
 	//Continue if we need more optional args
 	js += ");},1000);";
 

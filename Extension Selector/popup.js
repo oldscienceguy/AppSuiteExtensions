@@ -36,12 +36,15 @@ function sendMessage(objName, action, response) {
 //Add a handler for our close button
 $(document).ready(function(){
     //Get info for each extension point from content_script
+    //TODO: Make the whole UI dynamic based on number of IPs created in execution.js
+    // Get count and loop to create UI with JQuery
+    
     var EP1, EP2, EP3, EP4;
     sendMessage("EP1","info", function(response) {
-            //console.log(response);
-            EP1 = response;
-            $("#cb1Label").text(EP1.funcName);
-        });
+        //console.log(response);
+        EP1 = response;
+        $("#cb1Label").text(EP1.funcName);
+    });
     sendMessage("EP2","info", function(response) {
         //console.log(response);
         EP2 = response;

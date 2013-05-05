@@ -1,22 +1,32 @@
 //This is executing in the content_script sandbox
 
+//This is an exception to content script sandbox.
+//We have access to storage objects and can use it to share data across sessions with background and popup
+var storage = chrome.storage.local;
+
 //Inject all our dependent EPs first
 //Note: All arguments to injectScript are passed as quoted string - see var url
 var url = '"http://upload.wikimedia.org/wikipedia/de/thumb/' + 
 'c/cb/Logo_Burger_King.svg/200px-Logo_Burger_King.svg.png"';
 
 //url: is specific to this EP Object
+var developer = "RAL";
 var EP1, EP2, EP3, EP4 = null;
 EP1 = {};
 EP1.funcName = "MessageAdvertising";
 EP1.func = MessageAdvertising;
-EP1.objName = injectObject({developer: "RAL", obj: EP1.func, objName: EP1.funcName});
-injectCode(EP1.objName + ".url = " + url + ";");
+EP1.objName = injectObject({developer: developer, obj: EP1.func, objName: EP1.funcName, arg1: url});
+storage.set({'CB1': true},function(){});
 
 EP2 = {};
 EP2.funcName = "InvertContactOrder";
 EP2.func = InvertContactOrder;
-EP2.objName = injectObject({developer: "RAL", obj: EP2.func, objName: EP2.funcName});
+EP2.objName = injectObject({developer: developer, obj: EP2.func, objName: EP2.funcName});
+storage.set({'CB2': true},function(){});
+
+storage.set({'CB3': false},function(){});
+storage.set({'CB4': false},function(){});
+
 
 //Popup page will send us messages
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
@@ -36,7 +46,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
 // request.objName
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    console.log(request);
+    console.log(request, sender);
     switch (request.action) {
       case "enable": 
         //Better to send message directly to application, but can only do so via windows message passing
