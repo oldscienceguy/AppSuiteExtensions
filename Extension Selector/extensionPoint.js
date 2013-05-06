@@ -50,37 +50,86 @@ Template = {
 }
 
 //Add advertisement banner to mail detail view
-//Example url
-//var url = "http://upload.wikimedia.org/wikipedia/de/thumb/" + 
-//    "c/cb/Logo_Burger_King.svg/200px-Logo_Burger_King.svg.png"
 
 MessageAdvertising = {
 	extPoint: 'io.ox/mail/detail/header',
 	extId: 'ad',
 	ext: null,
 	url: null,
+	adToDisp: -1,
+	//web-banner-gallery has good examples of different image sizes and href's
+	//This doesn't really belong here, but it's the easiest way to get the data to 
+	//simulate auto-rotation of an ad server
+	ads: [{
+		img: 'http://web-banner-gallery.com/wp-content/uploads/2010/11/YMG-125x125-banner.gif',
+		href: 'http://www.be-yellow.com/'
+		},
+		{
+		img: 'http://web-banner-gallery.com/wp-content/uploads/2010/11/lynda-125x125-banner.jpg',
+		href: 'http://www.lynda.com/'
+		},
+		{
+		img: 'http://web-banner-gallery.com/wp-content/uploads/2010/09/mailchimp-125x125-banner.png',
+		href: 'http://www.mailchimp.com/'
+		},
+		{
+		img: 'http://web-banner-gallery.com/wp-content/uploads/2010/10/tophosts-125x125-banner.jpg',
+		href: 'http://www.tophosts.com/top25-web-hosts.html'
+		}
+	],
+	ad: null,
+
 	install: function(url) {
 		this.url = url;
 		var self = this;
+
 		require(["io.ox/core/extensions"],function(ext) {
 			self.ext = ext;
 			ext.point(self.extPoint).extend({
 		  		index: 'first',
 		  		id: self.extId,
 		  		draw: function (data) {
-		  			//this refers to the window in the draw context, not the object
+		  			//Pick an ad as if server were rotating it
+		  			self.adToDisp = ++self.adToDisp % 4;
+		  			self.ad = self.ads[self.adToDisp];
+		  			//'this' refers to the window in the draw context, not the object
 		  			//Use 'self'
-		    		this.append(
-		      			$('<div class="pull-right">')
-		      				.css({
-	        				backgroundImage: "url(" + self.url + ")",
-		        			backgroundSize: '100px 100px',
-		        			width: '100px', height: '100px',
-		        			margin: '0px 0px 40px 10px',
-		      			})
-		    		);
-		  		}
-			});
+		  			// IAB standard ad sizes http://www.iab.net/guidelines/508676/508767/displayguidelines
+		  			this.append(
+		  				//Create new jQuery object and set html
+		  				
+		  				//Use this for iframe and ad-server that returns HTML
+		  				/*
+		  				$('<iframe />>')
+			  				.css({
+			        			width: '125', height: '125',
+			        			margin: '0px 0px 40px 10px',
+			      			})
+			      			.attr({
+			      				class: 'pull-right', 
+			      				src: 'http://web-banner-gallery.com/2010/ymg-125x125-banner.html'
+			      			})
+						*/
+			      		$('<a>')
+			      			.attr({
+			      				href: self.ad.href,
+			      				target: '_blank'
+			      			})
+			      			.html(
+			      				$('<img>')
+			      					.css({
+			        				width: '125px', height: '125px',
+			        				margin: '0px 0px 40px 10px'
+			      					})
+			      					.attr({
+			      						class: 'pull-right',
+			      						src: self.ad.img
+			      					})
+
+		        			) //end html		      		
+		      		); //end append
+		  		} //end draw
+			}); //end extend
 		});
 	},
 	//We can't call this method same name as ext.point... or it will be replaced in injectObj
@@ -194,55 +243,76 @@ InvertContactOrder = {
 	}		
 }
 
-//Add menu item to File detail 'more' menu
-//Extracted from documentation
-AddFileLinks = {
-	extPoint: 'io.ox/files/links/inline',
-	extId: 'testlink',
+//Sample Dropbox integration: 
+//Make a function "Save to Dropbox" available in eMail and Files 
+//Todo: Actually integrate with Dropbox
+//Todo: Make the dropbox web application available as an app in app suite launcher. 
+
+AddDropboxMenu = {
+	extPoint1: 'io.ox/files/links/inline', //Add to Files More... menu
+	extPoint2: 'io.ox/mail/links/inline', //Add to Mail More ... menu
+	extId: 'sendToDropbox',
 	ext: null,
 	opt1: null, //Optional data
+	linkAction: 'io.ox/mail/actions/sendToDropbox',
 	install: function() {
-		//this.ext = require("io.ox/core/extensions");
-		var self = this; //For use where this doesn't reference object
-		//Extension point code goes here
+		var self = this;
 		require(['io.ox/core/extensions', 'io.ox/core/extPatterns/links'], function (ext, links) {
 			self.ext = ext;
-  			new links.Action('io.ox/files/actions/testlink', {
-  				//Removed from example, capabilities not recognized
-  				/*
-				requires: function (e) {
-      				e.collection.has('some') && capabilities.has('webmail');
-				},
-				*/
-				//Use action: if single use
+			//links.Action(...) must match links.Link(ref:) to be triggered
+			//See actions.js in source for additional action examples
+			new links.Action( self.linkAction, {
+		       id: self.extId,
+		       requires: 'one',
+		       	//Use action: if single use
+				// or
 				//Use multiple: if can be reused
-    			multiple: function (baton) {
-      				console.log(baton);
-    			}
-  			}); //End Action def
+    			//multiple: function (baton) {
+      			//	console.log(baton);
+    			//}
 
-  			ext.point(this.extPoint).extend(new links.Link({
-   				id: this.extId, //Must be unique
-    			index: 400,	//Order of link 
-    			label: 'labelname', //What the user sees
-    			ref: 'io.ox/files/actions/testlink' //Reference to action
-  			})); //End ext.point
-		}); //End require
+		       action: function (baton) {
+		           console.log("Save to DropBox", baton);
+					// Whatever you want to do goes here
+		       }
+			});
+			ext.point(self.extPoint1).extend(new links.Link({
+		        //after: 'reminder',
+		        prio: 'lo',	//Not sure how used
+		        //index: 400, //Not sure how used
+		        id: self.extId,
+		        label: "Save to DropBox",
+		        //ref: has to be same as links.Action() above
+		        ref: self.linkAction
+		    }));
+		    ext.point(self.extPoint2).extend(new links.Link({
+		        //after: 'reminder', //Explicit positioning in menu
+		        prio: 'lo',
+		        id: self.extId,
+		        label: "Save to DropBox",
+		        //ref: has to be same as links.Action() above
+		        ref: self.linkAction	//Reuses action
+		    }));
+
+		});
 	},
 	enableExt: function() {
 		//If not installed, ext will be undefined
 		if (this.ext)
-			this.ext.point(this.extPoint).enable(this.extId);	
+			this.ext.point(this.extPoint1).enable(this.extId);	
+			this.ext.point(this.extPoint2).enable(this.extId);	
 	},
 	disableExt: function() {
 		if (this.ext)
-			this.ext.point(this.extPoint).disable(this.extId);
+			this.ext.point(this.extPoint1).disable(this.extId);
+			this.ext.point(this.extPoint2).disable(this.extId);
 	},
 	removeExt: function () {
 
 	}
 		
 }
+
 
 //Start working on new portal widget example using doc as example
 //See http://oxpedia.org/wiki/index.php?title=AppSuite:Writing_a_portal_plugin
@@ -288,13 +358,6 @@ PortalWidget = {
 		
 }
 
-
-//Adds SaveToDropBox to More menu for attachments
-//Adds same in Files application More menu
-function AddSaveToDropBoxMenu () {
-
-}
-
 function BrandedLook () {
 
 }
@@ -308,12 +371,6 @@ Switch to a different looking skin, with Ad-Support, to show simlpe skinning / C
 that connects to those other modules brings up simple upsell dialog with a Buy button. 
 If clicked, the system reloads with all features enabled
 3. Extension Points
-Sample Dropbox integration: Make a function "Save to Dropbox" available in eMail and Files, 
-extending the menus or providing a button where feasible (see mockups attached). 
-Make the dropbox web application available as an app in app suite launcher. 
-If we want to get funky create a Dropbox widget that shows the latest files added / changed. 
-And if we want to be really really funky display the dropbox folder list available in files - 
-but I assume this requires backend work, so forget it if it does,.
 */
 
 

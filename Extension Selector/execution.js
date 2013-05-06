@@ -6,31 +6,35 @@ var storage = chrome.storage.local;
 
 //Inject all our dependent EPs first
 //Note: All arguments to injectScript are passed as quoted string - see var url
-var url = '"http://upload.wikimedia.org/wikipedia/de/thumb/' + 
-'c/cb/Logo_Burger_King.svg/200px-Logo_Burger_King.svg.png"';
 
-//url: is specific to this EP Object
 var developer = "RAL";
 var EP1, EP2, EP3, EP4 = null;
-EP1 = {};
-EP1.funcName = "MessageAdvertising";
-EP1.func = MessageAdvertising;
-EP1.objName = injectObject({developer: developer, obj: EP1.func, objName: EP1.funcName, arg1: url});
+EP1 = {
+  funcName: "MessageAdvertising",
+  func: MessageAdvertising
+};  
+EP1.objName = injectObject({developer: developer, obj: EP1.func, objName: EP1.funcName})
 storage.set({'CB1': true},function(){});
 
-EP2 = {};
-EP2.funcName = "InvertContactOrder";
-EP2.func = InvertContactOrder;
+EP2 = {
+  funcName: "InvertContactOrder",
+  func: InvertContactOrder
+};
 EP2.objName = injectObject({developer: developer, obj: EP2.func, objName: EP2.funcName});
 storage.set({'CB2': true},function(){});
 
-storage.set({'CB3': false},function(){});
-storage.set({'CB4': false},function(){});
+EP3 = {
+  funcName: "AddDropboxMenu",
+  func: AddDropboxMenu
+};
+EP3.objName = injectObject({developer: developer, obj: EP3.func, objName: EP3.funcName});
+storage.set({'CB3': true},function(){});
 
+storage.set({'CB4': false},function(){});
 
 //Popup page will send us messages
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-	console.log(request);
+	//console.log(request);
 	/*
   if (request.greeting == "hello"){
     var1 = request.var1; // Set variable 1
@@ -46,7 +50,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
 // request.objName
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    console.log(request, sender);
+    //console.log(request, sender);
     switch (request.action) {
       case "enable": 
         //Better to send message directly to application, but can only do so via windows message passing
