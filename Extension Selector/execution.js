@@ -17,8 +17,8 @@ EP1.objName = injectObject({developer: developer, obj: EP1.func, objName: EP1.fu
 storage.set({'CB1': true},function(){});
 
 EP2 = {
-  funcName: "InvertContactOrder",
-  func: InvertContactOrder
+  funcName: "Branding",
+  func: Branding
 };
 EP2.objName = injectObject({developer: developer, obj: EP2.func, objName: EP2.funcName});
 storage.set({'CB2': true},function(){});
@@ -30,6 +30,11 @@ EP3 = {
 EP3.objName = injectObject({developer: developer, obj: EP3.func, objName: EP3.funcName});
 storage.set({'CB3': true},function(){});
 
+EP4 = {
+  funcName: "NewApplication",
+  func: NewApplication
+};
+EP4.objName = injectObject({developer: developer, obj: EP4.func, objName: EP4.funcName});
 storage.set({'CB4': false},function(){});
 
 //Popup page will send us messages

@@ -251,6 +251,7 @@ InvertContactOrder = {
 AddDropboxMenu = {
 	extPoint1: 'io.ox/files/links/inline', //Add to Files More... menu
 	extPoint2: 'io.ox/mail/links/inline', //Add to Mail More ... menu
+	extPoint3: 'io.ox/mail/links/toolbar', //Add to left icon toolbar in mail
 	extId: 'sendToDropbox',
 	ext: null,
 	opt1: null, //Optional data
@@ -358,10 +359,239 @@ PortalWidget = {
 		
 }
 
-function BrandedLook () {
+//Derived from Stephan's work for Charter
+Branding = {
+	extPoint: 'extensionPoint',
+	extId: 'extensionId',
+	ext: null,
+	opt1: null, //Optional data
+	install: function() {
+		var self = this; //For use where this doesn't reference object
+		require(["io.ox/core/extensions"], function(ext){
+			self.ext = ext;
+			//Extension point code goes here
+			//This overrides the top location for entire AppSuite and creates space at top
+			$('#io-ox-core') 
+				.css ({top: '30px'});
 
+			$('body')
+				.prepend(
+        			$('<div>')
+        				//.addClass('charter-header')
+        				.css({
+        					//height: '98px'
+    						//background: url('http://www.open-xchange.com/fileadmin/user_upload/open-xchange/image/landing/partner/25_portal_1u1.png')
+        				})
+        				.html('Branded header goes here')
+		        		.append(
+		    				$('<img>') 
+		    					.attr ({
+		    						//src: 'http://www.open-xchange.com/fileadmin/user_upload/open-xchange/image/landing/partner/25_portal_1u1.png'
+		    					})
+		    			)
+        		) //End prepend
+		});
+	},
+	enableExt: function() {
+		//If not installed, ext will be undefined
+		if (this.ext)
+			this.ext.point(this.extPoint).enable(this.extId);	
+	},
+	disableExt: function() {
+		if (this.ext)
+			this.ext.point(this.extPoint).disable(this.extId);
+	},
+	removeExt: function () {
+
+	}
+		
 }
 
+//From Lessons
+FloatingWidget = {
+	extPoint: 'extensionPoint',
+	extId: 'extensionId',
+	ext: null,
+	opt1: null, //Optional data
+	install: function() {
+		var self = this; //For use where this doesn't reference object
+		require(["io.ox/core/extensions"], function(ext){
+			self.ext = ext;
+			//Extension point code goes here
+			 var point = ext.point("io.ox/lessons/floatingWidget");
+		    // Now, let's extend that extension point. Every extension point
+		    // has some kind of contract about what it expects its extensions to provide.
+		    // In this case, the extension is supposed to provide a #draw method
+		    // and is passed the node to draw into as the 'this' variable
+		    point.extend({
+		        id: 'example1', // Every extension is supposed to have an id
+		        index: 100, // Extensions are ordered based on their indexes
+		        draw: function () {
+		            // This function is called by the part of the code that
+		            // offers this extension point
+		            this.append($("<h3>").text("Hello, Traveller!"));
+		        }
+		    });
+		});
+	},
+	enableExt: function() {
+		//If not installed, ext will be undefined
+		if (this.ext)
+			this.ext.point(this.extPoint).enable(this.extId);	
+	},
+	disableExt: function() {
+		if (this.ext)
+			this.ext.point(this.extPoint).disable(this.extId);
+	},
+	removeExt: function () {
+
+	}
+		
+}
+
+//Example from http://oxpedia.org/wiki/index.php?title=AppSuite:Writing_a_simple_application
+//Look at main.js (multiple copies, one for each app) for additional examples
+NewApplication = {
+	extPoint: 'extensionPoint',
+	extId: 'extensionId',
+	ext: null,
+	opt1: null, //Optional data
+	install: function() {
+		var self = this; //For use where this doesn't reference object
+		//First example of installing a full module
+		define('com.example/helloWorld/main', [], function () {
+
+		    'use strict';
+
+		    // this is just code. loading this does not imply to launch the application
+
+		    // application object. 'name' is mandatory!
+		    var app = ox.ui.createApp({ 
+		    	name: 'com.example/helloWorld' ,
+		    	title: 'My App', //This is label for menu bar
+		    	userContent: false	//Displays edit icon next to title if true
+		    });
+
+		    // by using setLauncher this way, we register a callback function
+		    // that is called when the application is really launched
+		    app.setLauncher(function () {
+
+		        // application window (some applications don't have a window)
+		        var win = ox.ui.createWindow({
+		            name: 'com.example/helloWorld',
+		            //chromeless: true, //Uses full application area with no left icon space etc
+		            title: 'Hello World'
+		        });
+
+		        app.setWindow(win);
+
+		        // Add css class with your namespace
+		        win.addClass('com-example-helloWorld');
+		        /*
+		        Styles are usually defined in .less file, where do we defined it?
+		        .com-example-helloWorld {
+				    h1 {
+				        color: red;
+				    }
+				    ...
+				}
+		        */
+
+		        // add something on 'main' node
+		        win.nodes.main
+		            .css({ 
+		            	padding: '13px', 
+		            	textAlign: 'center' 
+		            })
+		            .append($('<h1>').text('Hello World!'));
+
+	            //Begin optional dialog example
+			    win.nodes.main.append($('<a class="btn">').text('Open Modal Dialog')
+			        .on('click', function (e) {
+			            e.preventDefault();
+			            require(['io.ox/core/tk/dialogs'],
+			                function (dialogs) {
+			                    new dialogs.ModalDialog({
+			                            width: 600,
+			                            easyOut: true
+			                        })
+			                        .append($('<p>').text('Hello world'))
+			                        .addButton('close', 'Close')
+			                        .show();
+			                } //end func dialogs
+			            ) //end require
+			        }) //end on click
+			    ); //end append
+			    //End optional dialog example
+
+				//Begin optional notifications example
+				require(['io.ox/core/notifications'],
+				    function (notifications) {
+				        win.nodes.main
+				            .append(
+				                $('<a class="btn">').text('Display success notfication')
+				                    .on('click', function () {
+				                        notifications.yell('success', 'Ah success!');
+				                    }),
+				                $('<a class="btn">').text('Display error notfication')
+				                    .on('click', function () {
+				                        notifications.yell('error', 'Oh failed!');
+				                    })
+				            );
+					}); //end require
+
+				//End optional notifications example
+
+				//Begin optional halo example
+				//For internal users
+				win.nodes.main.append(
+				    $('<a href="#" class="btn halo-link">')
+				    .data({ internal_userid: ox.user_id })       
+				    .text('Open Halo')
+				);
+				//For external users
+				win.nodes.main.append(
+				    $('<a class="btn halo-link">')
+				    .data({ email1: "test@example.com" })
+				    .text('Open Halo from Email')
+				);
+				//End optional halo example
+
+				//Begin optional settings example
+					//Todo: Pick up from doc
+				//End optional settings example
+
+			    win.show();
+
+        	}); //end set app launcher
+		    // show the window
+
+		    return {
+		        getApp: app.getInstance
+		    };
+		});	//end define
+	}, //end install
+	enableExt: function() {
+		ox.launch('com.example/helloWorld/main');
+		return;
+		//If not installed, ext will be undefined
+		if (this.ext)
+			this.ext.point(this.extPoint).enable(this.extId);	
+	},
+	disableExt: function() {
+		//return somewhere else, mail?
+		//Is there some object where all the modules are defined and aliased
+		//Something like ox.modules.mail
+		ox.launch('io.ox/mail/main');
+		return;
+		if (this.ext)
+			this.ext.point(this.extPoint).disable(this.extId);
+	},
+	removeExt: function () {
+
+	}
+		
+}
 /* 
 From Raf
 Todo: 1. Skinning
