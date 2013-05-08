@@ -6,7 +6,6 @@
 //To trigger a breakpoint, set it, then execute location.reload(true) in the console window
 console.log("In popup.js, but you won't see this unless you have 'Inspect Popup' window open");
 
-
 //Persistent storage can be local or sync
 //If sync, Chrome will attempt to set/restore across different devices
 var storage = chrome.storage.local;
@@ -38,7 +37,7 @@ $(document).ready(function(){
     //Get info for each extension point from content_script
     //TODO: Make the whole UI dynamic based on number of IPs created in execution.js
     // Get count and loop to create UI with JQuery
-    
+
     var EP1, EP2, EP3, EP4;
     sendMessage("EP1","info", function(response) {
         //console.log(response);

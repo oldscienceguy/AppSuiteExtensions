@@ -113,15 +113,15 @@ function injectCode(js){
 	inject.text += 'ep.type = "text/javascript";';
 	inject.text += 'ep.text = "' + js + '";';
 	inject.text += 'document.head.appendChild(ep);';
-	console.log(inject.text);
+	//console.log(inject.text);
 
 	if (chrome && chrome.tabs) {
 		//Programatic injection
-		console.log("Inject via chrome.tabs.executeScript");
+		//console.log("Inject via chrome.tabs.executeScript");
 		chrome.tabs.executeScript(null, {"code": inject.text});
 	} else {
 		//Content_script sandbox
-		console.log("Inject via document.head.appendChild()");
+		//console.log("Inject via document.head.appendChild()");
 		document.head.appendChild(inject);
 	}
 
@@ -147,7 +147,7 @@ function injectObject(context) {
 	var objName = nameSpace + context.objName;
 
 	//Everything below is executed in Chrome extension context, so no namespace conflict with other scripts
-	console.log("In injectObject");
+	//console.log("In injectObject");
 	//debugger; //break
 
 	//js is what will go in the inject.text element
@@ -162,8 +162,16 @@ function injectObject(context) {
 	js += objName + " = ";
 	js += JSON.stringify(obj);
 	js += ";";
+
+	//If optional arguments, add them
+	if (context.arg1)
+		js += 'arg1:' + context.arg1 + ',';
+	if (context.arg2)
+		js += 'arg2:' + context.arg2 + ',';
+	if (context.arg3)
+		js += 'arg3:' + context.arg3 + ',';
 	
-	//Create member code.  No way to do this automatically in js, but we know member names
+	//Create function member code.  No way to do this automatically in js, but we know member names
 	js += objName + ".install = ";
 	var temp = obj.install.toString();
 	temp = temp.replace("install",""); //Puts functioName in namespace
@@ -187,23 +195,6 @@ function injectObject(context) {
 	temp = temp.replace("removeExt",""); //Puts functioName in namespace
 	js += temp;
 	js += ";";
-
-
-	//Execute function after short delay to allow post load require.js patching by boot.js
-	//If delay is too short, we may get errors in require() statements
-	//If delay is too long, user may not see extension if they look right away
-	js += "window.setTimeout(function() {";
-	js += objName + ".install(";
-
-	if (context.arg1)
-		js += context.arg1;
-	if (context.arg2)
-		js += "," + context.arg2
-	if (context.arg3)
-		js += "," + context.arg3
-
-	//Continue if we need more optional args
-	js += ");},1000);";
 
 	injectCode(js);
 	return objName;

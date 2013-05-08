@@ -1,5 +1,14 @@
 //This is executing in the content_script sandbox
 
+//@@ macros work in extension js or CSS
+//Can be used in a URL with __MSG__ preffix
+//background-image:url('chrome-extension://__MSG_@@extension_id__/background.png');
+
+//var myid = chrome.i18n.getMessage("@@extension_id");
+//console.log(myid);
+//var myUrl = chrome.extension.getURL('appsuite.png');
+//console.log(myUrl);
+
 //This is an exception to content script sandbox.
 //We have access to storage objects and can use it to share data across sessions with background and popup
 var storage = chrome.storage.local;
@@ -14,21 +23,21 @@ EP1 = {
   func: MessageAdvertising
 };  
 EP1.objName = injectObject({developer: developer, obj: EP1.func, objName: EP1.funcName})
-storage.set({'CB1': true},function(){});
+storage.set({'CB1': false},function(){});
 
 EP2 = {
   funcName: "Branding",
   func: Branding
 };
 EP2.objName = injectObject({developer: developer, obj: EP2.func, objName: EP2.funcName});
-storage.set({'CB2': true},function(){});
+storage.set({'CB2': false},function(){});
 
 EP3 = {
   funcName: "AddDropboxMenu",
   func: AddDropboxMenu
 };
 EP3.objName = injectObject({developer: developer, obj: EP3.func, objName: EP3.funcName});
-storage.set({'CB3': true},function(){});
+storage.set({'CB3': false},function(){});
 
 EP4 = {
   funcName: "NewApplication",
