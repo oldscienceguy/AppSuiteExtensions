@@ -1,10 +1,10 @@
 //This is executing in the content_script sandbox
 
-//@@ macros work in extension js or CSS
+//@@ macros work in CSS
 //Can be used in a URL with __MSG__ preffix
 //background-image:url('chrome-extension://__MSG_@@extension_id__/background.png');
 
-//var myid = chrome.i18n.getMessage("@@extension_id");
+var chromeExtId = chrome.i18n.getMessage("@@extension_id");
 //console.log(myid);
 //var myUrl = chrome.extension.getURL('appsuite.png');
 //console.log(myUrl);
@@ -22,28 +22,28 @@ EP1 = {
   funcName: "MessageAdvertising",
   func: MessageAdvertising
 };  
-EP1.objName = injectObject({developer: developer, obj: EP1.func, objName: EP1.funcName})
+EP1.objName = injectObject({chromeExtId: chromeExtId, developer: developer, obj: EP1.func, objName: EP1.funcName})
 storage.set({'CB1': false},function(){});
 
 EP2 = {
   funcName: "Branding",
   func: Branding
 };
-EP2.objName = injectObject({developer: developer, obj: EP2.func, objName: EP2.funcName});
+EP2.objName = injectObject({chromeExtId: chromeExtId, developer: developer, obj: EP2.func, objName: EP2.funcName});
 storage.set({'CB2': false},function(){});
 
 EP3 = {
   funcName: "AddDropboxMenu",
   func: AddDropboxMenu
 };
-EP3.objName = injectObject({developer: developer, obj: EP3.func, objName: EP3.funcName});
+EP3.objName = injectObject({chromeExtId: chromeExtId, developer: developer, obj: EP3.func, objName: EP3.funcName});
 storage.set({'CB3': false},function(){});
 
 EP4 = {
   funcName: "NewApplication",
   func: NewApplication
 };
-EP4.objName = injectObject({developer: developer, obj: EP4.func, objName: EP4.funcName});
+EP4.objName = injectObject({chromeExtId: chromeExtId, developer: developer, obj: EP4.func, objName: EP4.funcName});
 storage.set({'CB4': false},function(){});
 
 //Popup page will send us messages

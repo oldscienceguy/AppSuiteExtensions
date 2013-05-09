@@ -163,13 +163,16 @@ function injectObject(context) {
 	js += JSON.stringify(obj);
 	js += ";";
 
+	//Add extension id - we need it to load resources
+	js += objName + '.chromeExtId = "' + context.chromeExtId + '", ';
+
 	//If optional arguments, add them
 	if (context.arg1)
-		js += 'arg1:' + context.arg1 + ',';
+		js += objName + '.arg1 = ' + context.arg1 + ',';
 	if (context.arg2)
-		js += 'arg2:' + context.arg2 + ',';
+		js += objName + '.arg2 = ' + context.arg2 + ',';
 	if (context.arg3)
-		js += 'arg3:' + context.arg3 + ',';
+		js += objName + '.arg3 = ' + context.arg3 + ',';
 	
 	//Create function member code.  No way to do this automatically in js, but we know member names
 	js += objName + ".install = ";

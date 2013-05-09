@@ -116,6 +116,13 @@
         "mac": "MacCtrl+Shift+F"
       }
     }
-  }
+  },
+  //This is needed in order to be able to use chrome-extension:// urls to get resources from extension
+  "web_accessible_resources": [
+    "images/charter-bg.png",
+    "images/charter-logo-hl.png"
+    //"style/double-rainbow.css",
+    //"script/double-rainbow.js"
+  ]
 
 }

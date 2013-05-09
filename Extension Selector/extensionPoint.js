@@ -27,6 +27,7 @@ Template = {
 	extId: 'extensionId',
 	ext: null,
 	loaded: false, //Strangeness: when I called this installed: it couldn't be set from install()
+	chromeExtId: '', //Set in execution.js
 	install: function(callWhenInstalled) {
 		var self = this; //For use where this doesn't reference object
 		//If this is called while appsuite is loading, we will get an error
@@ -70,6 +71,7 @@ MessageAdvertising = {
 	extId: 'ad',
 	ext: null,
 	loaded: false,
+	chromeExtId: '', //Set in execution.js
 	adToDisp: -1,
 	//web-banner-gallery has good examples of different image sizes and href's
 	//This doesn't really belong here, but it's the easiest way to get the data to 
@@ -233,6 +235,7 @@ InvertContactOrder = {
 	extId: 'com-example-contact-reversename',
 	ext: null,
 	loaded: false,
+	chromeExtId: '', //Set in execution.js
 	install: function(callWhenInstalled) {
 		var self = this; //For use where this doesn't reference object
 		window.setTimeout(function() {
@@ -290,7 +293,7 @@ AddDropboxMenu = {
 	extId: 'sendToDropbox',
 	ext: null,
 	loaded: false,
-	loaded:false,
+	chromeExtId: '', //Set in execution.js
 	linkAction: 'io.ox/mail/actions/sendToDropbox',
 	install: function(callWhenInstalled) {
 		var self = this;
@@ -371,6 +374,7 @@ PortalWidget = {
 	extId: 'extensionId',
 	ext: null,
 	loaded: false,
+	chromeExtId: '', //Set in execution.js
 	install: function(callWhenInstalled) {
 		var self = this; //For use where this doesn't reference object
 		window.setTimeout(function() {
@@ -423,6 +427,7 @@ Branding = {
 	extId: 'extensionId',
 	ext: null,
 	loaded: false,
+	chromeExtId: '', //Set in execution.js
 	install: function(callWhenInstalled) {
 		var self = this; //For use where this doesn't reference object
 		window.setTimeout(function() {
@@ -432,14 +437,81 @@ Branding = {
 				self.loaded = true;
 				//Extension point code goes here
 				//This overrides the top location for entire AppSuite and creates space at top
-				$('#io-ox-core') 
-					.css ({top: '30px'});
+				//$('#io-ox-core') 
+				//	.css ({top: '30px'});
+				//There are jquery plugins to make adding a css class easier
+				// look for .cssRule plugin or jss
+				//Brute force
+				//We could load css file from ext resources with chrome-extension url
+				//  but no way to easily add self.chromeExtId as we can with strings below
+				$("<style>")
+				    .prop("type", "text/css")
+				    
+				    .html("\
+				    	#io-ox-core {\
+    						top: 98px;\
+						}\
+				    	.charter-header {\
+						    height: 98px;\
+						    background: url(chrome-extension://" + self.chromeExtId + "/images/charter-bg.png);\
+						}\
+					    .logo {\
+					        float: left;\
+					        height: 98px;\
+					        width: 195px;\
+					        background: url(chrome-extension://" + self.chromeExtId + "/images/charter-logo-hl.png);\
+					        margin-left: 108px;\
+					    }\
+					    .google {\
+					        position: absolute;\
+					        right: 330px;\
+					        height: 98px;\
+					        .input-append {\
+					            position: absolute;\
+					            top: 50%;\
+					            margin-top: -15px;\
+					        }\
+					    }\
+					")
 
+					.appendTo("head");
+
+			    $('body').prepend(
+			        $('<div>').addClass('charter-header')
+			        .append(
+			            // append the logo container
+			            $('<div>').addClass('logo')
+			        )
+			        .append(
+			            // append the google search container
+			            $('<div>').addClass('google')
+			            .append(
+			                // container for input
+			                $('<div>').addClass('input-append')
+			                .append(
+			                    // input field
+			                    $('<input>').addClass('span2').attr({ placeholder: 'Google', type: 'text', id: 'google-search-input' }),
+			                    // button on right
+			                    $('<button>').addClass('btn')
+			                    .append(
+			                        $('<i>').addClass('icon-search')
+			                    )
+			                    // catch the click on the 'search' button
+			                    .on('click', function (evt) {
+			                        // get value of input field and trigger alert
+			                        alert('Your search: ' + $('#google-search-input').val());
+			                    })
+			                )
+			            )
+			        )
+			    );
+/*
 				$('body')
 					.prepend(
 	        			$('<div>')
-	        				//.addClass('charter-header')
+	        				.addClass('charter-header')
 	        				.css({
+
 	        					//height: '98px'
 	    						//background: url('http://www.open-xchange.com/fileadmin/user_upload/open-xchange/image/landing/partner/25_portal_1u1.png')
 	        				})
@@ -451,6 +523,7 @@ Branding = {
 			    					})
 			    			)
 	        		) //End prepend
+*/
 				//End Extension point code
 				//Call success func if defined
 				if (callWhenInstalled != null)
@@ -483,6 +556,7 @@ FloatingWidget = {
 	extId: 'extensionId',
 	ext: null,
 	loaded: false,
+	chromeExtId: '', //Set in execution.js
 	install: function(callWhenInstalled) {
 		var self = this; //For use where this doesn't reference object
 		window.setTimeout(function() {
@@ -537,6 +611,7 @@ NewApplication = {
 	extId: 'extensionId',
 	ext: null,
 	loaded: false,
+	chromeExtId: '', //Set in execution.js
 	install: function(callWhenInstalled) {
 		var self = this; //For use where this doesn't reference object
 		window.setTimeout(function() {
