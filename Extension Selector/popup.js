@@ -16,6 +16,7 @@ function saveState() {
     	'CB2': $("#checkBox2")[0].checked,
     	'CB3': $("#checkBox3")[0].checked,
     	'CB4': $("#checkBox4")[0].checked,
+        'CB5': $("#checkBox5")[0].checked,
     },function(){});
 }
 
@@ -38,7 +39,7 @@ $(document).ready(function(){
     //TODO: Make the whole UI dynamic based on number of IPs created in execution.js
     // Get count and loop to create UI with JQuery
 
-    var EP1, EP2, EP3, EP4;
+    var EP1, EP2, EP3, EP4, EP5;
     sendMessage("EP1","info", function(response) {
         //console.log(response);
         EP1 = response;
@@ -59,8 +60,13 @@ $(document).ready(function(){
         EP4 = response;
         $("#cb4Label").text(EP4.funcName);
     });
+    sendMessage("EP5","info", function(response) {
+        //console.log(response);
+        EP5 = response;
+        $("#cb5Label").text(EP5.funcName);
+    });
 
-	storage.get(['CB1','CB2','CB3','CB4'],function(items){
+	storage.get(['CB1','CB2','CB3','CB4','CB5'],function(items){
 		//This is a callback and gets called asynchronously from rest of code
 		//Wait for storage data to be available
 		if (items.CB1) {
@@ -79,6 +85,8 @@ $(document).ready(function(){
 			$("#checkBox3")[0].checked = items.CB3;
 		if (items.CB4)
 			$("#checkBox4")[0].checked = items.CB4;
+        if (items.CB5)
+            $("#checkBox5")[0].checked = items.CB5;
 	});
 
 	//Save when popup closes
@@ -125,6 +133,15 @@ $(document).ready(function(){
             sendMessage(EP4.objName,"enable",function(){});
         } else {
             sendMessage(EP4.objName,"disable",function(){});
+        }    });
+    $("#checkBox5").click(function(){
+        if (!EP5)
+            return;
+        saveState();
+        if ($("#checkBox5")[0].checked) {
+            sendMessage(EP5.objName,"enable",function(){});
+        } else {
+            sendMessage(EP5.objName,"disable",function(){});
         }    });
 
 });

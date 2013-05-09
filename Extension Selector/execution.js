@@ -17,7 +17,7 @@ var storage = chrome.storage.local;
 //Note: All arguments to injectScript are passed as quoted string - see var url
 
 var developer = "RAL";
-var EP1, EP2, EP3, EP4 = null;
+var EP1, EP2, EP3, EP4, EP5 = null;
 EP1 = {
   funcName: "MessageAdvertising",
   func: MessageAdvertising
@@ -45,6 +45,13 @@ EP4 = {
 };
 EP4.objName = injectObject({chromeExtId: chromeExtId, developer: developer, obj: EP4.func, objName: EP4.funcName});
 storage.set({'CB4': false},function(){});
+
+EP5 = {
+  funcName: "ThemeMaker2",
+  func: ThemeMaker2
+};
+EP5.objName = injectObject({chromeExtId: chromeExtId, developer: developer, obj: EP5.func, objName: EP5.funcName});
+storage.set({'CB5': false},function(){});
 
 //Popup page will send us messages
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
@@ -90,6 +97,10 @@ chrome.runtime.onMessage.addListener(
           case "EP4":
             if (EP4)
               sendResponse(EP4);
+            break;
+          case "EP5":
+            if (EP5)
+              sendResponse(EP5);
             break;
         }
         break;
