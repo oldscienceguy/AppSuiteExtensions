@@ -13,6 +13,10 @@ var chromeExtId = chrome.i18n.getMessage("@@extension_id");
 //We have access to storage objects and can use it to share data across sessions with background and popup
 var storage = chrome.storage.local;
 
+//Testing
+//injectJSFile({fileName:'EP-Template.js'});
+//injectCSSFile({fileName:'EP-Style.css'});
+
 //Inject all our dependent EPs first
 //Note: All arguments to injectScript are passed as quoted string - see var url
 

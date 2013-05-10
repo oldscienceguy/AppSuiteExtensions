@@ -7,16 +7,16 @@
 //If we get it wrong, we'll get an error "require is not defined"
 //
 /*
-		|---------------------------|					|---------------------------|
-		|Chrome Extension context 	|					|PopUp context				|
-		|	Background.js        	|					|	popup.html popup.js 	|
-		|							|					|	debug with icon menu	|
-		|---------------------------|					|---------------------------|
-					V 												V
-		chrome.tabs.executeScript 						chrome.tabs.executeScript
-		manifest content_script 									|
-					V 												V
-		|---------------------------|  <-----------------------------
+		|---------------------------|		Chrome Action		|---------------------------|
+		|Chrome Extension context 	|			Buttons			|PopUp context				|
+		|	Background.js        	|<-- Events --|				|	popup.html popup.js 	|
+		|							|							|	debug with icon menu	|
+		|---------------------------|							|---------------------------|
+					V 														V
+		chrome.tabs.executeScript 								chrome.tabs.executeScript
+		manifest content_script 											|
+					V 														V
+		|---------------------------|  <-------------------------------------
 		|Sandboxed App context 		|
 		|	Content_script 			|
 		|	Access App DOM 			|
@@ -98,33 +98,77 @@ function injectScript(context) {
 
 //Injects a string containing executable code
 function injectCode(js){
-	//Here be dragons: Be very careful if you need to change escape logic, easy to introduce hard-to-find errors
-	js = js.replace(/\"/g, '\\"'); //escape double quotes
-	js = js.replace(/\'/g, "\'"); //escape single quotes
-	//This was hard, \n is not allowed as control char in script text (inserted by ().toString())
-	//Replace with escaped \n so it appears as '\n' in text
-	js = js.replace(/\n/g, "\\n"); //No more \n
-
-	//This code works if we're called with programatic injection or content_script injection
-	var inject = document.createElement("script");
-	inject.type = "text/javascript";
-	inject.text = "";
-	inject.text += 'var ep = document.createElement("script");';
-	inject.text += 'ep.type = "text/javascript";';
-	inject.text += 'ep.text = "' + js + '";';
-	inject.text += 'document.head.appendChild(ep);';
-	//console.log(inject.text);
-
 	if (chrome && chrome.tabs) {
+		//We're injecting code as a string programatically from outside app sandbox
+
+		//Here be dragons: Be very careful if you need to change escape logic, easy to introduce hard-to-find errors
+		js = js.replace(/\"/g, '\\"'); //escape double quotes
+		js = js.replace(/\'/g, "\'"); //escape single quotes
+		//This was hard, \n is not allowed as control char in script text (inserted by ().toString())
+		//Replace with escaped \n so it appears as '\n' in text
+		js = js.replace(/\n/g, "\\n"); //No more \n
+
+		//This code works if we're called with programatic injection or content_script injection
+		var inject = '';
+		inject += 'var ep = document.createElement("script");';
+		inject += 'ep.type = "text/javascript";';
+		inject += 'ep.text = "' + js + '";';
+		inject += 'document.head.appendChild(ep);';
 		//Programatic injection
 		//console.log("Inject via chrome.tabs.executeScript");
-		chrome.tabs.executeScript(null, {"code": inject.text});
+		chrome.tabs.executeScript(null, {"code": inject});
 	} else {
 		//Content_script sandbox
 		//console.log("Inject via document.head.appendChild()");
+		var inject = document.createElement("script");
+		inject.text = js;
 		document.head.appendChild(inject);
 	}
 
+}
+
+//Injects a script tag with src = chrome-extension:// url
+//File must be specified in manifest.json or we will get a browser security error
+//WARNING: This does not add any namespace prefix other than what may be used in the js file
+function injectJSFile(context) {
+	if (context == null || context.fileName == null)
+		return;
+	var manifest = chrome.runtime.getManifest();
+	//console.log(manifest);
+	//Make sure file is in manifest
+	if ($.inArray(context.fileName, manifest.web_accessible_resources) == -1) {
+		console.error("injectJS: Filename must be in manifest web_accessible_resources");
+		return;
+	}
+	
+	var chromeExtId = chrome.i18n.getMessage("@@extension_id");
+	var inject = document.createElement("script");
+	inject.text = '';
+	inject.src = 'chrome-extension://' + chromeExtId + '/' + context.fileName;
+
+	document.head.appendChild(inject);	
+}
+
+//Injects a script tag with src = chrome-extension:// url
+//File must be specified in manifest.json or we will get a browser security error
+//WARNING: This does not add any namespace prefix other than what may be used in the js file
+function injectCSSFile(context) {
+	if (context == null || context.fileName == null)
+		return;
+	var manifest = chrome.runtime.getManifest();
+	//console.log(manifest);
+	//Make sure file is in manifest
+	if ($.inArray(context.fileName, manifest.web_accessible_resources) == -1) {
+		console.error("injectCSS: Filename must be in manifest web_accessible_resources");
+		return;
+	}
+	
+	var chromeExtId = chrome.i18n.getMessage("@@extension_id");
+	var inject = document.createElement("link");
+	inject.rel = 'stylesheet';
+	inject.href = 'chrome-extension://' + chromeExtId + '/' + context.fileName;
+
+	document.head.appendChild(inject);	
 }
 
 //Injects an object with standard methods we can call

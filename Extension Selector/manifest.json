@@ -74,8 +74,9 @@
       //One or more CSS files to inject on matching pages
       //"css": ["mystyles.css"],
 
-      //One or more JS files to inject on matching pages
+      //One or more JS files to inject on matching pages (in sandbox space)
       "js": [
+        "jquery-2.0.0.min.js",
         "injectScript.js", //Utility function to inject any function into app, then call it
         "extensionPoint.js",
         "EP-MessageAdvertising.js",
@@ -125,10 +126,13 @@
       }
     }
   },
+  
   //This is needed in order to be able to use chrome-extension:// urls to get resources from extension
   "web_accessible_resources": [
     "images/charter-bg.png",
-    "images/charter-logo-hl.png"
+    "images/charter-logo-hl.png",
+    "EP-Template.js", //Testing
+    "EP-Style.css" //Testing
     //"style/double-rainbow.css",
     //"script/double-rainbow.js"
   ]
