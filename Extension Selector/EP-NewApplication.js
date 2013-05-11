@@ -1,6 +1,6 @@
 //Example from http://oxpedia.org/wiki/index.php?title=AppSuite:Writing_a_simple_application
 //Look at main.js (multiple copies, one for each app) for additional examples
-NewApplication = {
+OxEpNamespace.NewApplication = {
 	extPoint: 'extensionPoint',
 	extId: 'extensionId',
 	ext: null,

@@ -1,5 +1,5 @@
 //Add advertisement banner to mail detail view
-MessageAdvertising = {
+OxEpNamespace.MessageAdvertising = {
 	extPoint: 'io.ox/mail/detail/header',
 	extId: 'ad',
 	ext: null,

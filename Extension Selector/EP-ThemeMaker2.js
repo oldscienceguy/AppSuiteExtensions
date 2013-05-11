@@ -1,6 +1,6 @@
 //Derived from Matthias Biggeleben theme-maker
 
-ThemeMaker2 = {
+OxEpNamespace.ThemeMaker2 = {
 	extPoint: 'extensionPoint',
 	extId: 'extensionId',
 	ext: null,

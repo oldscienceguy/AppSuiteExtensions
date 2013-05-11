@@ -14,48 +14,35 @@ var chromeExtId = chrome.i18n.getMessage("@@extension_id");
 var storage = chrome.storage.local;
 
 //Testing
-//injectJSFile({fileName:'EP-Template.js'});
-//injectCSSFile({fileName:'EP-Style.css'});
+//injectJSFile({filename:'EP-Template.js'});
+//injectCSSFile({filename:'EP-Style.css'});
 
 //Inject all our dependent EPs first
 //Note: All arguments to injectScript are passed as quoted string - see var url
 
-var developer = "RAL";
-var EP1, EP2, EP3, EP4, EP5 = null;
-EP1 = {
-  funcName: "MessageAdvertising",
-  func: MessageAdvertising
-};  
-EP1.objName = injectObject({chromeExtId: chromeExtId, developer: developer, obj: EP1.func, objName: EP1.funcName})
-storage.set({'CB1': false},function(){});
+var developer = "Ox_RAL";
+var namespace = createNamespace(developer);
+var numExtensions = 0;
+var extensions = [];
+function addExtensionPoint(filename,objName) {
+  var i = numExtensions++;
+  var fullObjName = namespace + '.' + objName;
+  extensions[i] = {};
+  extensions[i].pos = i;
+  extensions[i].label = objName; //What gets displayed in popup UI
+  extensions[i].objName = fullObjName;
+  injectJSFile({filename: filename});
+  var o = {};
+  o[fullObjName]=false; //Ugly way to create an object member from a variable
+  storage.set(o);
+}
 
-EP2 = {
-  funcName: "Branding",
-  func: Branding
-};
-EP2.objName = injectObject({chromeExtId: chromeExtId, developer: developer, obj: EP2.func, objName: EP2.funcName});
-storage.set({'CB2': false},function(){});
-
-EP3 = {
-  funcName: "AddDropboxMenu",
-  func: AddDropboxMenu
-};
-EP3.objName = injectObject({chromeExtId: chromeExtId, developer: developer, obj: EP3.func, objName: EP3.funcName});
-storage.set({'CB3': false},function(){});
-
-EP4 = {
-  funcName: "NewApplication",
-  func: NewApplication
-};
-EP4.objName = injectObject({chromeExtId: chromeExtId, developer: developer, obj: EP4.func, objName: EP4.funcName});
-storage.set({'CB4': false},function(){});
-
-EP5 = {
-  funcName: "ThemeMaker2",
-  func: ThemeMaker2
-};
-EP5.objName = injectObject({chromeExtId: chromeExtId, developer: developer, obj: EP5.func, objName: EP5.funcName});
-storage.set({'CB5': false},function(){});
+//Add as many as we want, popup.js is dynamic and will display whatever we add here
+addExtensionPoint('EP-MessageAdvertising.js','MessageAdvertising');
+addExtensionPoint('EP-Branding.js','Branding');
+addExtensionPoint('EP-AddDropboxMenu.js','AddDropboxMenu');
+addExtensionPoint('EP-NewApplication.js','NewApplication');
+addExtensionPoint('EP-ThemeMaker2.js','ThemeMaker2');
 
 //Popup page will send us messages
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
@@ -77,6 +64,9 @@ chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     //console.log(request, sender);
     switch (request.action) {
+      case 'numExtensions':
+        sendResponse(numExtensions);
+        break;
       case "enable": 
         //Better to send message directly to application, but can only do so via windows message passing
         injectCode(request.objName + ".enableExt();");
@@ -85,29 +75,9 @@ chrome.runtime.onMessage.addListener(
         injectCode(request.objName + ".disableExt();");
         break;
       case "info":
-        switch (request.objName) {
-          case "EP1":
-            if (EP1) 
-              sendResponse(EP1);
-            break;
-          case "EP2":
-            if (EP2)
-              sendResponse(EP2);
-            break;
-          case "EP3":
-            if (EP3)
-              sendResponse(EP3);
-            break;
-          case "EP4":
-            if (EP4)
-              sendResponse(EP4);
-            break;
-          case "EP5":
-            if (EP5)
-              sendResponse(EP5);
-            break;
-        }
-        break;
+        sendResponse(extensions[request.objName]);
+        return;
+
     }
     /*
     console.log(sender.tab ?

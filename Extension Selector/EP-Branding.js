@@ -1,5 +1,5 @@
 //Derived from Stephan's work for Charter
-Branding = {
+OxEpNamespace.Branding = {
 	extPoint: 'extensionPoint',
 	extId: 'extensionId',
 	ext: null,
@@ -64,13 +64,13 @@ Branding = {
 						}\
 				    	.charter-header {\
 						    height: 98px;\
-						    background: url(chrome-extension://" + self.chromeExtId + "/images/charter-bg.png);\
+						    background: url(chrome-extension://" + OxEpNamespace.chromeExtId + "/images/charter-bg.png);\
 						}\
 					    .logo {\
 					        float: left;\
 					        height: 98px;\
 					        width: 195px;\
-					        background: url(chrome-extension://" + self.chromeExtId + "/images/charter-logo-hl.png);\
+					        background: url(chrome-extension://" + OxEpNamespace.chromeExtId + "/images/charter-logo-hl.png);\
 					        margin-left: 108px;\
 					    }\
 					    .google {\

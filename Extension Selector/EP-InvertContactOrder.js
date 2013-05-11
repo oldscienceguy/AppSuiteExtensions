@@ -1,5 +1,5 @@
 //From documentation, reverses contact
-InvertContactOrder = {
+OxEpNamespace.InvertContactOrder = {
 	extPoint: 'io.ox/contacts/detail',
 	extId: 'com-example-contact-reversename',
 	ext: null,

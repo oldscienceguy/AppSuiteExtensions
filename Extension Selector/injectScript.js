@@ -40,6 +40,21 @@
 */
 console.log("injectScript.js loading");
 
+//This must be the first function called because it creates our namespace and sets up some namespace variable
+function createNamespace(developer) {
+  //Create namespace
+  var chromeExtId = chrome.i18n.getMessage("@@extension_id");
+  var namespace = 'OxEp.' + developer;
+  var js = '';
+  js += 'if (typeof OxEp == "undefined" || OxEp == null) OxEp = {};\n';
+  js += 'if (typeof OxEp.' + developer + ' == "undefined" || OxEp.' + developer + '== null) OxEp.' + developer + ' = {};\n';
+  js += 'OxEp.' + developer + '.chromeExtId = "' + chromeExtId + '";\n';
+  js += 'var OxEpNamespace = ' + namespace;
+  //console.log(js);
+  injectCode(js);
+  return namespace;
+}
+
 //Args
 //  developer: - string with company name or other unique id.  Used to create namespace
 //  obj: - Object to be inserted (not a string name for object)
@@ -131,12 +146,12 @@ function injectCode(js){
 //File must be specified in manifest.json or we will get a browser security error
 //WARNING: This does not add any namespace prefix other than what may be used in the js file
 function injectJSFile(context) {
-	if (context == null || context.fileName == null)
+	if (context == null || context.filename == null)
 		return;
 	var manifest = chrome.runtime.getManifest();
 	//console.log(manifest);
 	//Make sure file is in manifest
-	if ($.inArray(context.fileName, manifest.web_accessible_resources) == -1) {
+	if ($.inArray(context.filename, manifest.web_accessible_resources) == -1) {
 		console.error("injectJS: Filename must be in manifest web_accessible_resources");
 		return;
 	}
@@ -144,21 +159,21 @@ function injectJSFile(context) {
 	var chromeExtId = chrome.i18n.getMessage("@@extension_id");
 	var inject = document.createElement("script");
 	inject.text = '';
-	inject.src = 'chrome-extension://' + chromeExtId + '/' + context.fileName;
+	inject.src = 'chrome-extension://' + chromeExtId + '/' + context.filename;
 
 	document.head.appendChild(inject);	
 }
 
-//Injects a script tag with src = chrome-extension:// url
+//Injects a link tag with href = chrome-extension:// url
 //File must be specified in manifest.json or we will get a browser security error
-//WARNING: This does not add any namespace prefix other than what may be used in the js file
+//WARNING: This does not add any namespace prefix other than what may be used in the css file
 function injectCSSFile(context) {
-	if (context == null || context.fileName == null)
+	if (context == null || context.filename == null)
 		return;
 	var manifest = chrome.runtime.getManifest();
 	//console.log(manifest);
 	//Make sure file is in manifest
-	if ($.inArray(context.fileName, manifest.web_accessible_resources) == -1) {
+	if ($.inArray(context.filename, manifest.web_accessible_resources) == -1) {
 		console.error("injectCSS: Filename must be in manifest web_accessible_resources");
 		return;
 	}
@@ -166,7 +181,7 @@ function injectCSSFile(context) {
 	var chromeExtId = chrome.i18n.getMessage("@@extension_id");
 	var inject = document.createElement("link");
 	inject.rel = 'stylesheet';
-	inject.href = 'chrome-extension://' + chromeExtId + '/' + context.fileName;
+	inject.href = 'chrome-extension://' + chromeExtId + '/' + context.filename;
 
 	document.head.appendChild(inject);	
 }

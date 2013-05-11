@@ -1,5 +1,5 @@
 //Use this for creating new EP objects
-Template = {
+OxEpNamespace.Template = {
 	extPoint: 'extensionPoint',
 	extId: 'extensionId',
 	ext: null,

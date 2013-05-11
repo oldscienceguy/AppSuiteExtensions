@@ -3,7 +3,7 @@
 //Todo: Actually integrate with Dropbox
 //Todo: Make the dropbox web application available as an app in app suite launcher. 
 
-AddDropboxMenu = {
+OxEpNamespace.AddDropboxMenu = {
 	extPoint1: 'io.ox/files/links/inline', //Add to Files More... menu
 	extPoint2: 'io.ox/mail/links/inline', //Add to Mail More ... menu
 	extPoint3: 'io.ox/mail/links/toolbar', //Add to left icon toolbar in mail

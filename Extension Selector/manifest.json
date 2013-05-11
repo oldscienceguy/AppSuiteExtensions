@@ -78,15 +78,8 @@
       "js": [
         "jquery-2.0.0.min.js",
         "injectScript.js", //Utility function to inject any function into app, then call it
-        "extensionPoint.js",
-        "EP-MessageAdvertising.js",
-        "EP-InvertContactOrder.js",
-        "EP-AddDropboxMenu.js",
-        "EP-PortalWidget.js",
-        "EP-Branding.js",
-        "EP-FloatingWidget.js",
-        "EP-NewApplication.js",
-        "EP-ThemeMaker2.js",
+        //"extensionPoint.js",
+        //"EP-MessageAdvertising.js",
         "execution.js" //Message passing
         ]
 
@@ -129,6 +122,17 @@
   
   //This is needed in order to be able to use chrome-extension:// urls to get resources from extension
   "web_accessible_resources": [
+    "EP-Namespace.js",
+
+    "EP-MessageAdvertising.js",
+    "EP-InvertContactOrder.js",
+    "EP-AddDropboxMenu.js",
+    "EP-PortalWidget.js",
+    "EP-Branding.js",
+    "EP-FloatingWidget.js",
+    "EP-NewApplication.js",
+    "EP-ThemeMaker2.js",
+
     "images/charter-bg.png",
     "images/charter-logo-hl.png",
     "EP-Template.js", //Testing

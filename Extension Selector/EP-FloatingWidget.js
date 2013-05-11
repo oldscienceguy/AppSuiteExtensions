@@ -1,5 +1,5 @@
 //From Lessons
-FloatingWidget = {
+OxEpNamespace.FloatingWidget = {
 	extPoint: 'extensionPoint',
 	extId: 'extensionId',
 	ext: null,

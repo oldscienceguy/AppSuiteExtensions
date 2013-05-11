@@ -4,22 +4,12 @@
 	<!-- Inline script is not allowed by Chrome extension security, so we can only specify js files -->
 	<!-- This gets us a local jQuery we can use in Chrome extension pages, since we don't have access to app JS -->
 	<script src="jquery-2.0.0.min.js"></script>
-	<!--
-	<script src="injectScript.js"></script>
-	<script src="extensionPoint.js"></script>
--->
 	<script src="popup.js"></script>
 </head>
 <body>
 	<div style="width:150px">
-		<div>AppSuite Extensions</div>
+		<div id='AppSuiteExtensions'>AppSuite Extensions</div>
 		<!-- Extension point names are added dynamically in popup.js -->
-		<input id="checkBox1" type="checkbox"><label id="cb1Label">Not Installed</label><br>
-		<input id="checkBox2" type="checkbox"><label id="cb2Label">Not Installed</label><br>
-		<input id="checkBox3" type="checkbox"><label id="cb3Label">Not Installed</label><br>
-		<input id="checkBox4" type="checkbox"><label id="cb4Label">Not Installed</label><br>
-		<input id="checkBox5" type="checkbox"><label id="cb5Label">Not Installed</label><br>
-		<input id="closeButton" type="button" value="Close">
 	</div>
 </body>
 </html>

@@ -2,7 +2,7 @@
 //See http://oxpedia.org/wiki/index.php?title=AppSuite:Writing_a_portal_plugin
 //Not working, we need to explore defining a module via Chrome ext
 //I think we need to use ext1 = require('io.ox/portal/widgets') and add the module?
-PortalWidget = {
+OxEpNamespace.PortalWidget = {
 	extPoint: 'extensionPoint',
 	extId: 'extensionId',
 	ext: null,
