@@ -43,6 +43,7 @@ addExtensionPoint('EP-Branding.js','Branding');
 addExtensionPoint('EP-AddDropboxMenu.js','AddDropboxMenu');
 addExtensionPoint('EP-NewApplication.js','NewApplication');
 addExtensionPoint('EP-ThemeMaker2.js','ThemeMaker2');
+addExtensionPoint('EP-PortalWidget.js','PortalWidget');
 
 //Popup page will send us messages
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {

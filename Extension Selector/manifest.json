@@ -68,6 +68,7 @@
     {
       //Matches one or more patterns, each pattern must have all 3 URL components
       "matches": ["*://*.open-xchange.com/appsuite*"], 
+      "matches": ["*://*.ox.io/appsuite*"],  //Demo servers
       //"matches": ["http://~/~"], //Matches nothing
       //"matches": ["<all_urls>"], //Matches everything
 
@@ -77,6 +78,7 @@
       //One or more JS files to inject on matching pages (in sandbox space)
       "js": [
         "jquery-2.0.0.min.js",
+        "jquery-ui.min.js",
         "injectScript.js", //Utility function to inject any function into app, then call it
         //"extensionPoint.js",
         //"EP-MessageAdvertising.js",
@@ -132,7 +134,7 @@
     "EP-FloatingWidget.js",
     "EP-NewApplication.js",
     "EP-ThemeMaker2.js",
-
+    "EP-PortalWidget.js",
     "images/charter-bg.png",
     "images/charter-logo-hl.png",
     "EP-Template.js", //Testing

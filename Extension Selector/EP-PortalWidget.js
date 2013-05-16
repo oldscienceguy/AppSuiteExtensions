@@ -11,35 +11,53 @@ OxEpNamespace.PortalWidget = {
 	install: function(callWhenInstalled) {
 		var self = this; //For use where this doesn't reference object
 		window.setTimeout(function() {
+			define("plugins/portal/myAd/register", ['io.ox/core/extensions'], function (ext) {
 
-			require(['io.ox/core/extensions/myAd'], function(ext){
-				self.ext = ext;
-				self.loaded = true;
-				//Extension point code goes here
-				ext.point('io.ox/portal/widget').extend({
-					//Preview is what we see on the portal page
-		        	preview: function () {
-		            	var content = $('<div class="content">')
-		                .text("Buy stuff. It's like solid happiness.");
-		            	this.append(content);
-		        	}
-		        });
-				//This adds the widget to the settings page so user can select
+			    "use strict";
+
+			    ext.point('io.ox/portal/widget/myAd').extend({
+			        title: "My Advertisement",
+
+			        load: function (baton) {
+			        	console.log('In PortalWidget load');
+			            var def = $.Deferred();
+			            def.resolve("It's like solid happiness.").done(function (data) {
+			                baton.data = {
+			                    teaser: 'Buy stuff',
+			                    fullText: 'Buy stuff. It is like solid happiness.'
+			                };
+			            });
+			            return def;
+			        },
+
+			        preview: function (baton) {
+			        	console.log('In PortalWidget preview');
+			            var content = $('<div class="content pointer">')
+			                .text(baton.data.teaser);
+			            this.append(content);
+			        },
+
+			        draw: function (baton) {
+			        	console.log('In PortalWidget draw');
+			            var content = $('<div class="myAdd">')
+			                .text(baton.data.fullText);
+			            this.append(content);
+			        }
+			    });
+
 			    ext.point('io.ox/portal/widget/myAd/settings').extend({
 			        title: 'My advertisement',
 			        type: 'myAd'
 			    });
-				//End Extension point code
-				//Call success func if defined
-				if (callWhenInstalled != null)
-					callWhenInstalled();	
-		    });
+			});
+
 		},1000); //end window.settimeout
 	},
 	enableExt: function() {
 		if (!this.loaded)
 			this.install(function(){
-				this.ext.point(this.extPoint).enable(this.extId);
+				ox.launch('plugins/portal/myAd/register');
+				//this.ext.point(this.extPoint).enable(this.extId);
 			});
 		else
 			this.ext.point(this.extPoint).enable(this.extId);			
