@@ -44,6 +44,7 @@ addExtensionPoint('EP-AddDropboxMenu.js','AddDropboxMenu');
 addExtensionPoint('EP-NewApplication.js','NewApplication');
 addExtensionPoint('EP-ThemeMaker2.js','ThemeMaker2');
 addExtensionPoint('EP-PortalWidget.js','PortalWidget');
+addExtensionPoint('InvertContactOrder.js','InvertContactOrder');
 
 //Popup page will send us messages
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {

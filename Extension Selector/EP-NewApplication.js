@@ -70,7 +70,12 @@ OxEpNamespace.NewApplication = {
 			            	textAlign: 'center' 
 			            })
 			            .append($('<h1>').text('Hello World!'));
-
+/*
+//Trying example from widgetbox.com, not working
+			        win.nodes.main.append($().html('<script type="text/javascript" src="http://cdn.widgetserver.com/syndication/subscriber/InsertWidget.js"></script><script type="text/javascript">if (WIDGETBOX) WIDGETBOX.renderWidget("1b2fd4c7-cea1-435d-a38e-2ac32305b03d");</script>'\
+'<noscript>Get the <a href="http://www.widgetbox.com/widget/last-fm-music-charts">last.fm Music Charts</a> widget and many other <a href="http://www.widgetbox.com/">great free widgets</a> at <a href="http://www.widgetbox.com">Widgetbox</a>! Not seeing a widget? (<a href="http://support.widgetbox.com/">More info</a>)</noscript>'
+));
+*/
 		            //Begin optional dialog example
 				    win.nodes.main.append($('<a class="btn">').text('Open Modal Dialog')
 				        .on('click', function (e) {

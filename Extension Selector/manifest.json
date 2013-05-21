@@ -17,7 +17,7 @@
   //"content_security_policy": "script-src 'self'; object-src 'self'",
   //If we need to relax policy uncomment and modify below
   //Adding 'unsafe-eval' to script-src allows us to use eval()
-  "content_security_policy": "script-src 'self' 'unsafe-eval' ; object-src 'self' ",
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self' ",
 
   // Pick one (or none) of the following extension types
   //"browser_action": {...}, //Can install a browser wide action button
@@ -67,8 +67,7 @@
   "content_scripts": [
     {
       //Matches one or more patterns, each pattern must have all 3 URL components
-      "matches": ["*://*.open-xchange.com/appsuite*"], 
-      "matches": ["*://*.ox.io/appsuite*"],  //Demo servers
+      "matches": ["*://*.open-xchange.com/appsuite*","*://*.ox.io/appsuite*"], 
       //"matches": ["http://~/~"], //Matches nothing
       //"matches": ["<all_urls>"], //Matches everything
 
@@ -137,6 +136,7 @@
     "EP-PortalWidget.js",
     "images/charter-bg.png",
     "images/charter-logo-hl.png",
+    "InvertContactOrder.js",
     "EP-Template.js", //Testing
     "EP-Style.css" //Testing
     //"style/double-rainbow.css",
