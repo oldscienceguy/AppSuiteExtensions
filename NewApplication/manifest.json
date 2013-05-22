@@ -1,0 +1,127 @@
+{
+  //Every Chrome extension MUST have a manifest.json in the folder
+  //WARNING: Note comments on JavaScript context changes to avoid maximum frustration!!
+
+  //Required Fields
+  "name": "NewApplication",
+  "version": "0.1",
+  "manifest_version": 2,
+
+  //Recommended Fields
+  "description": "Inverts Contact Order",
+  //"icons": { ... },
+  //"default_locale": "en",
+  //Provides an explicit mechanism to express our content security policy
+
+  //Default security policy for manifest_version 2
+  //"content_security_policy": "script-src 'self'; object-src 'self'",
+  //If we need to relax policy uncomment and modify below
+  //Adding 'unsafe-eval' to script-src allows us to use eval()
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self' ",
+
+  // Pick one (or none) of the following extension types
+  //"browser_action": {...}, //Can install a browser wide action button
+  //"page_action": {...}, //Can install a page specific action button
+  //"theme": {...},
+  //"app": {...},
+
+
+  //Defines the icons, name, html, etc for the extension button that appears in toolbar
+  //Action button is often used for testing before applying URL filtering
+  //"browser_action": {
+    //If we don't specify icon, we get a default
+    //"default_icon": "AppSuite.png",
+    //Tool tip, can also be set by calling setTitle
+    //"default_title": "Appsuite demo extension points",
+    //Action button will pop-up this HTML page with information, forms, etc
+    //If default_popup is specified, a browser action event WILL NOT be triggered in background.js
+    //So if you use this, all your onclick actions must be specified in browserAction.html
+    //"default_popup": "popup.html"
+  //},
+
+
+
+  //Optional ability to run event handlers in the background which can handle Chrome Extension events
+  // or DOM events.
+  //The most common usage is to handle the Chrome Extension button click to do something
+  //This can run as an 'on-demand' if persistent=false.  Chrome knows what events are handled and will only
+  //  run when a handled event occurs
+  //If you want the 'thread' to run continuously for some reasont, specify persisitent = true 
+  //Multiple scritps can be specified, so we can have as many background processes as we need
+  //  although I haven't run into a case where you need more than one
+  //"background": {
+    // Pick one or none of "scripts" or "page"
+    // In AppSuiteTemplate, background.js and background.html do exactly the same thing
+    //"scripts": ["background.js"], //List of scripts to run in background page
+    //"page": "background.html", //Use html if we need to load external JS pages
+    //persistent must be true in order to use chrome.webRequests
+    //"persistent": true //true if permanent background page, false if on-demand event page
+  //},
+
+
+  
+  //Optional ability to automatically inject scripts on pages that match URL pattern(s)
+  //  without requiring user action
+  //A content_script without a browser_action has no UI once installed.
+  //This emulates what a server extension point script would do
+  "content_scripts": [
+    {
+      //Matches one or more patterns, each pattern must have all 3 URL components
+      "matches": ["*://*.open-xchange.com/appsuite*","*://*.ox.io/appsuite*"], 
+      //"matches": ["http://~/~"], //Matches nothing
+      //"matches": ["<all_urls>"], //Matches everything
+
+      //One or more CSS files to inject on matching pages
+      //"css": ["mystyles.css"],
+
+      //One or more JS files to inject on matching pages (in sandbox space)
+      "js": [
+        //"jquery-2.0.0.min.js",
+        //"jquery-ui.min.js",
+        "injectScript.js", //Utility function to inject any function into app, then call it
+        "defineEP.js"
+        ]
+
+      //Script can be injected at document_start, document_end, or document_idle (default)
+      //"run_at": "document_end"
+    }
+  ],
+  
+
+
+  //Optional, but usually required
+  //Allows us to use chrome tab and ignore cross site scripting with specified domain
+  "permissions": [
+    "tabs", //Allows us to use chrome.tabs
+    "webRequest", //Allows us to use chrome.webRequest
+    "storage", //Allows us to use extension space storage across sessions
+    //"declarativeWebRequest", //Faster than webRequest, but only available in beta channel
+    //Warning: Unless you make this more explicit after initial testing you may open up a
+    //  cross site scripting vulnerability
+    "http://*/*", //!!CHANGE!!
+    "https://*/*" //!!CHANGE!!
+  ],
+
+  //Optional, but can be used to create shortcuts for the Chrome extension
+  "commands": {
+    //Sends a custom command that can be handled in background.js handler
+    //Not working ???
+    "appsuite_custom": {
+      "suggested_key": { "default": "Ctrl+Shift+Y" },
+      "description": "Send a 'toggle-feature' event to the extension"
+    },
+    //This sends the same event as clicking the extension icon
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "MacCtrl+Shift+F"
+      }
+    }
+  },
+  
+  //This is needed in order to be able to use chrome-extension:// urls to get resources from extension
+  "web_accessible_resources": [
+    "EP-NewApplication.js"
+  ]
+
+}

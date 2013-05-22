@@ -11,6 +11,7 @@ OxEpNamespace.PortalWidget = {
 	install: function(callWhenInstalled) {
 		var self = this; //For use where this doesn't reference object
 		window.setTimeout(function() {
+			self.loaded = true;
 			define("plugins/portal/myAd/register", ['io.ox/core/extensions'], function (ext) {
 
 			    "use strict";
